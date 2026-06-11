@@ -372,7 +372,9 @@ h1 {
   background: var(--red);
   flex-shrink: 0;
 }
-.option-btn:hover { color: var(--ink); padding-left: 14px; }
+@media (hover: hover) {
+  .option-btn:hover { color: var(--ink); padding-left: 14px; }
+}
 .option-btn.selected {
   color: var(--ink);
   padding-left: 0;
