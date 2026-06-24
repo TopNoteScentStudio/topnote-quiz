@@ -23,7 +23,7 @@ function doPost(e) {
     const subjectForOwner = `New Quiz Result: ${name} — ${CONFIG.QUIZ_NAME}`;
 
     const htmlBody = buildEmailHtml(name, vibes, results);
-    const ownerHtml = htmlBody + buildConsultantNotes(leather, results, impressions, chemistry);
+    const ownerHtml = htmlBody + buildConsultantNotes(leather, results, impressions, chemistry, email);
 
     // Send to quiz taker
     GmailApp.sendEmail(email, subjectForTaker, "", {
@@ -226,7 +226,7 @@ function buildEmailHtml(name, vibes, results) {
 </html>';
 }
 
-function buildConsultantNotes(leather, results, impressions, chemistry) {
+function buildConsultantNotes(leather, results, impressions, chemistry, clientEmail) {
   var PAPER   = "#e7e0d0";
   var INK     = "#221e18";
   var INK_MID = "#6a6053";
@@ -235,7 +235,7 @@ function buildConsultantNotes(leather, results, impressions, chemistry) {
   var SERIF   = "'Cormorant', Georgia, 'Times New Roman', serif";
   var SANS    = "'Syne', 'Helvetica Neue', Arial, sans-serif";
 
-  var interpretation = 'No leather response recorded';
+  var interpretation = leather ? 'Response did not match a known option.' : 'No leather response recorded.';
   if (leather === 'I don’t enjoy leather at all') {
     interpretation = 'Strong negative — Musk direction. Rules out Magnetic profile.';
   } else if (leather === 'Soft and powdery suede') {
@@ -282,6 +282,7 @@ function buildConsultantNotes(leather, results, impressions, chemistry) {
 <table width="560" cellpadding="0" cellspacing="0" role="presentation" style="max-width:560px;width:100%;">\
   <tr><td style="border-top:2px solid ' + RULE + ';padding-top:28px;">\
     <div style="font-family:' + SANS + ';font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:' + INK_DIM + ';margin-bottom:16px;">Consultant Notes</div>\
+    <div style="font-family:' + SERIF + ';font-size:15px;color:' + INK_MID + ';margin-bottom:4px;">Results sent to: <span style="color:' + INK + ';font-weight:500;">' + esc(clientEmail) + '</span></div>\
   </td></tr>\
 \
   <tr><td style="padding-bottom:20px;">\

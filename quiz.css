@@ -420,6 +420,19 @@ h1 {
   color: var(--ink-dim);
   margin-top: 10px;
 }
+.email-typo {
+  font-family: var(--body);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--red-deep);
+  margin-top: 8px;
+}
+.email-typo a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .text-area-input {
   width: 100%;
   padding: 14px;
