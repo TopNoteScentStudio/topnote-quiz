@@ -100,8 +100,7 @@ function optionList(opts, getSel, onPick) {
 
 function renderVibes(el) {
   const q = VIBES_QUESTIONS[state.idx];
-  const total = VIBES_QUESTIONS.length + SCENT_QUESTIONS.length + IMPRESSION_QUESTIONS.length + CHEMISTRY_QUESTIONS.length;
-  const pct = (state.idx / total) * 100;
+  const pct = ((state.idx + 1) / VIBES_QUESTIONS.length) * 100;
   setFrame("Top Note", "Part I · Vibes", `${String(state.idx+1).padStart(2,"0")} / ${String(VIBES_QUESTIONS.length).padStart(2,"0")}`);
   el.innerHTML = `
     <div class="progress-head">
@@ -147,8 +146,7 @@ function renderInterstitial(el) {
 
 function renderScent(el) {
   const q = SCENT_QUESTIONS[state.idx];
-  const total = VIBES_QUESTIONS.length + SCENT_QUESTIONS.length + IMPRESSION_QUESTIONS.length + CHEMISTRY_QUESTIONS.length;
-  const pct = ((VIBES_QUESTIONS.length + state.idx) / total) * 100;
+  const pct = ((state.idx + 1) / SCENT_QUESTIONS.length) * 100;
   const answered = Object.keys(state.scent).length;
   setFrame("Top Note", "Part II · Scent Profile", `${String(state.idx+1).padStart(2,"0")} / ${SCENT_QUESTIONS.length}`);
   el.innerHTML = `
@@ -199,8 +197,7 @@ function renderImpressionsInterstitial(el) {
 
 function renderImpressions(el) {
   const q = IMPRESSION_QUESTIONS[state.idx];
-  const total = VIBES_QUESTIONS.length + SCENT_QUESTIONS.length + IMPRESSION_QUESTIONS.length + CHEMISTRY_QUESTIONS.length;
-  const pct = ((VIBES_QUESTIONS.length + SCENT_QUESTIONS.length + state.idx) / total) * 100;
+  const pct = ((state.idx + 1) / IMPRESSION_QUESTIONS.length) * 100;
   const answered = Object.keys(state.impressions).length;
   setFrame("Top Note", "Part III · Impressions", `${String(state.idx+1).padStart(2,"0")} / ${IMPRESSION_QUESTIONS.length}`);
   el.innerHTML = `
@@ -261,8 +258,7 @@ function renderChemistryInterstitial(el) {
 
 function renderChemistry(el) {
   const q = CHEMISTRY_QUESTIONS[state.idx];
-  const total = VIBES_QUESTIONS.length + SCENT_QUESTIONS.length + IMPRESSION_QUESTIONS.length + CHEMISTRY_QUESTIONS.length;
-  const pct = ((VIBES_QUESTIONS.length + SCENT_QUESTIONS.length + IMPRESSION_QUESTIONS.length + state.idx) / total) * 100;
+  const pct = ((state.idx + 1) / CHEMISTRY_QUESTIONS.length) * 100;
   const answered = Object.keys(state.chemistry).filter(k => state.chemistry[k] != null && state.chemistry[k] !== "").length;
   setFrame("Top Note", "Part IV · Chemistry", `${String(state.idx+1).padStart(2,"0")} / ${CHEMISTRY_QUESTIONS.length}`);
   const inputHtml = q.type === "text"

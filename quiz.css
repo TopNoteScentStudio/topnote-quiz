@@ -303,12 +303,14 @@ h1 {
   background: var(--rule);
   margin-bottom: 44px;
   position: relative;
+  overflow: visible;
 }
 .progress-fill {
   height: 100%;
   background: var(--red-deep);
   transition: width 0.45s ease;
   position: relative;
+  overflow: visible;
 }
 .progress-fill::after {
   content: '';
