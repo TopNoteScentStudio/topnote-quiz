@@ -441,6 +441,24 @@ function renderResults(el) {
   });
 }
 
+function buildAllResponses() {
+  var responses = [];
+  VIBES_QUESTIONS.forEach(function(q) {
+    responses.push({ section: "Vibes", question: q.text, answer: state.vibes[q.id] || "—" });
+  });
+  SCENT_QUESTIONS.forEach(function(q) {
+    responses.push({ section: "Scent Profile", question: q.text, answer: state.scent[q.id] || "—" });
+  });
+  IMPRESSION_QUESTIONS.forEach(function(q) {
+    var picked = state.impressions[q.id];
+    responses.push({ section: "Impressions", question: q.text, answer: picked != null ? "Image " + (picked + 1) : "—" });
+  });
+  CHEMISTRY_QUESTIONS.forEach(function(q) {
+    responses.push({ section: "Chemistry", question: q.text, answer: state.chemistry[q.id] || "—" });
+  });
+  return responses;
+}
+
 async function submitResults(results) {
   if (state.emailSent) return;
   state.emailSent = true;
@@ -448,7 +466,7 @@ async function submitResults(results) {
   if (!statusMsg) return;
   try {
     await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ name: state.name, email: state.email, vibes: state.vibes, results, leather: state.scent.s46, impressions: calcImpressions(state.impressions), chemistry: state.chemistry }) });
+      body: JSON.stringify({ name: state.name, email: state.email, vibes: state.vibes, results, leather: state.scent.s46, impressions: calcImpressions(state.impressions), chemistry: state.chemistry, allResponses: buildAllResponses() }) });
   } catch (e) { /* no-cors: opaque, assume ok */ }
   statusMsg.className = "status-msg success";
   statusMsg.innerHTML = "Results sent to " + esc(state.email) + " \u2014 check your inbox.<br><span style='font-size:14px;color:var(--ink-dim)'>If you don\u2019t see it, check your spam or junk folder.</span>";

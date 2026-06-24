@@ -13,7 +13,7 @@ const CONFIG = {
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    const { name, email, vibes, results, leather, impressions, chemistry } = data;
+    const { name, email, vibes, results, leather, impressions, chemistry, allResponses } = data;
 
     if (!name || !email || !results) {
       return jsonResponse({ success: false, error: "Missing required fields" });
@@ -23,7 +23,7 @@ function doPost(e) {
     const subjectForOwner = `New Quiz Result: ${name} — ${CONFIG.QUIZ_NAME}`;
 
     const htmlBody = buildEmailHtml(name, vibes, results);
-    const ownerHtml = htmlBody + buildConsultantNotes(leather, results, impressions, chemistry, email);
+    const ownerHtml = htmlBody + buildConsultantNotes(leather, results, impressions, chemistry, email, allResponses);
 
     // Send to quiz taker
     GmailApp.sendEmail(email, subjectForTaker, "", {
@@ -226,7 +226,7 @@ function buildEmailHtml(name, vibes, results) {
 </html>';
 }
 
-function buildConsultantNotes(leather, results, impressions, chemistry, clientEmail) {
+function buildConsultantNotes(leather, results, impressions, chemistry, clientEmail, allResponses) {
   var PAPER   = "#e7e0d0";
   var INK     = "#221e18";
   var INK_MID = "#6a6053";
@@ -329,6 +329,10 @@ function buildConsultantNotes(leather, results, impressions, chemistry, clientEm
   <tr><td style="padding-bottom:12px;">\
     <div style="font-family:' + SANS + ';font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:' + INK_DIM + ';margin-bottom:12px;">Chemistry — Skin Profile</div>\
     ' + buildChemistryRows(chemistry, SERIF, SANS, INK, INK_MID, RULE) + '\
+  </td></tr>\
+\
+  <tr><td style="padding-bottom:12px;">\
+    ' + buildResponseLog(allResponses, SERIF, SANS, INK, INK_MID, INK_DIM, RULE) + '\
   </td></tr>\
 </table>\
 </td></tr>\
@@ -438,6 +442,36 @@ function buildChemistryRows(chemistry, SERIF, SANS, INK, INK_MID, RULE) {
       <div style="font-family:' + SERIF + ';font-size:14px;color:' + INK + ';">' + esc(insight) + '</div>\
     </div>';
   }).join('');
+}
+
+function buildResponseLog(allResponses, SERIF, SANS, INK, INK_MID, INK_DIM, RULE) {
+  if (!allResponses || !allResponses.length) return '';
+  var lastSection = '';
+  var rows = allResponses.map(function(r, i) {
+    var sectionCell = '';
+    if (r.section !== lastSection) {
+      var count = 0;
+      for (var j = i; j < allResponses.length && allResponses[j].section === r.section; j++) count++;
+      sectionCell = '<td rowspan="' + count + '" style="padding:6px 10px;font-family:' + SANS + ';font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:' + INK + ';border-bottom:1px solid ' + RULE + ';vertical-align:top;white-space:nowrap;">' + esc(r.section) + '</td>';
+      lastSection = r.section;
+    }
+    return '\
+      <tr>\
+        ' + sectionCell + '\
+        <td style="padding:6px 10px;font-family:' + SERIF + ';font-size:13px;color:' + INK_MID + ';border-bottom:1px solid ' + RULE + ';vertical-align:top;">' + esc(r.question) + '</td>\
+        <td style="padding:6px 10px;font-family:' + SERIF + ';font-size:13px;font-weight:500;color:' + INK + ';border-bottom:1px solid ' + RULE + ';vertical-align:top;">' + esc(r.answer) + '</td>\
+      </tr>';
+  }).join('');
+  return '\
+    <div style="font-family:' + SANS + ';font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:' + INK_DIM + ';margin-bottom:12px;">All Responses</div>\
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">\
+      <tr style="background:' + RULE + ';">\
+        <th style="padding:6px 10px;font-family:' + SANS + ';font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:' + INK + ';text-align:left;">Section</th>\
+        <th style="padding:6px 10px;font-family:' + SANS + ';font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:' + INK + ';text-align:left;">Question</th>\
+        <th style="padding:6px 10px;font-family:' + SANS + ';font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:' + INK + ';text-align:left;">Response</th>\
+      </tr>\
+      ' + rows + '\
+    </table>';
 }
 
 function esc(s) {
